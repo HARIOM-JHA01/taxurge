@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import AboutSectionOne from "@/components/About/AboutSectionOne";
 import AboutSectionTwo from "@/components/About/AboutSectionTwo";
 import Blog from "@/components/Blog";

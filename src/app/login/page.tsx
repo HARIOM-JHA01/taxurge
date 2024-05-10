@@ -1,13 +1,36 @@
+'use client';
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Log In Page",
-  description: "This is Log In Page for TaxUrge",
-};
 
 const SigninPage = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (!process.env.SERVER_URL) {
+        toast.error("Server URL is not defined.");
+      }
+    
+      console.log(process.env.SERVER_URL);
+      const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/login`, { email, password });
+      const { token } = response.data;
+      // Store JWT in localStorage or sessionStorage
+      localStorage.setItem("token", token);
+      // Redirect to a different page after successful sign-in
+      router.push("/dashboard");
+    } catch (error) {
+      setError(error.response.data.message);
+      toast.error(error.response.data.message);
+    }
+  };
   return (
     <>
       <section className="relative z-10 overflow-hidden pb-16 pt-36 md:pb-20 lg:pb-28 lg:pt-[180px]">
@@ -16,8 +39,9 @@ const SigninPage = () => {
             <div className="w-full px-4">
               <div className="shadow-three mx-auto max-w-[500px] rounded bg-white px-6 py-10 dark:bg-dark sm:p-[60px]">
                 <h3 className="mb-3 text-center text-2xl font-bold text-black dark:text-white sm:text-3xl">
-                  Login in to your account
+                  Login to your account
                 </h3>
+                {error && <p className="mb-3 text-red-500 text-center">{error}</p>}
                 <p className="mb-11 text-center text-base font-medium text-body-color">
                   Login to your account for a faster checkout.
                 </p>
@@ -79,7 +103,7 @@ const SigninPage = () => {
                   </p>
                   <span className="hidden h-[1px] w-full max-w-[70px] bg-body-color/50 sm:block"></span>
                 </div> */}
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="mb-8">
                     <label
                       htmlFor="email"
@@ -105,11 +129,13 @@ const SigninPage = () => {
                       type="password"
                       name="password"
                       placeholder="Enter your Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
                     />
                   </div>
-                  <div className="mb-8 flex flex-col justify-between sm:flex-row sm:items-center">
-                    <div className="mb-4 sm:mb-0">
+                  <div className="mb-2 flex flex-col justify-between sm:flex-row sm:items-center">
+                    {/* <div className="mb-4 sm:mb-0">
                       <label
                         htmlFor="checkboxLabel"
                         className="flex cursor-pointer select-none items-center text-sm font-medium text-body-color"
@@ -118,7 +144,6 @@ const SigninPage = () => {
                           <input
                             type="checkbox"
                             id="checkboxLabel"
-                            className="sr-only"
                           />
                           <div className="box mr-4 flex h-5 w-5 items-center justify-center rounded border border-body-color border-opacity-20 dark:border-white dark:border-opacity-10">
                             <span className="opacity-0">
@@ -149,11 +174,11 @@ const SigninPage = () => {
                       >
                         Forgot Password?
                       </a>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="mb-6">
                     <button className="shadow-submit dark:shadow-submit-dark flex w-full items-center justify-center rounded-sm bg-primary px-9 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
-                      Sign in
+                      Log in
                     </button>
                   </div>
                 </form>
