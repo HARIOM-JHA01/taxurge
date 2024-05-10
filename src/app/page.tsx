@@ -15,8 +15,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Tax Urge",
-  description: "This website is for tax u`rge",
-  // other metadata
+  description: "This website is for tax urge",
+
 };
 
 export default function Home() {

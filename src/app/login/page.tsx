@@ -15,11 +15,7 @@ const SigninPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!process.env.SERVER_URL) {
-        toast.error("Server URL is not defined.");
-      }
     
-      console.log(process.env.SERVER_URL);
       const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/login`, { email, password });
       const { token } = response.data;
       // Store JWT in localStorage or sessionStorage
@@ -109,12 +105,14 @@ const SigninPage = () => {
                       htmlFor="email"
                       className="mb-3 block text-sm text-dark dark:text-white"
                     >
-                      Mobile number
+                      Email
                     </label>
                     <input
                       type="email"
                       name="email"
-                      placeholder="Enter your mobile no."
+                      placeholder="Enter your Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
                     />
                   </div>
