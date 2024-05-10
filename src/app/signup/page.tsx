@@ -5,10 +5,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// export const metadata: Metadata = {
-//   title: "Sign Up Page",
-//   description: "This is Sign Up Page for TaxUrge",
-// };
+
 
 const SignupPage = () => {
   const router = useRouter()
@@ -31,15 +28,17 @@ const SignupPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/', {
+      const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/register/`, {
         fullName,
         email,
         password,
       });
 
       if (response.status === 201) {
-        // Redirect to the services page upon successful registration
-        toast.success(`${fullName} thank you for sign up`)
+        // JWT authentication upon successful registration
+        const token = response.data.token; 
+        localStorage.setItem('token', token); // Store the token in local storage
+        toast.success(`${fullName} thank you for sign up`);
         setTimeout(() => {
           router.push('/services');
         }, 5000);
@@ -232,9 +231,9 @@ const SignupPage = () => {
                   </div>
                 </form>
                 <p className="text-center text-base font-medium text-body-color">
-                  Already using Startup?{" "}
-                  <Link href="/signin" className="text-primary hover:underline">
-                    Sign in
+                  Already using TaxUrge?{" "}
+                  <Link href="/login" className="text-primary hover:underline">
+                    log in
                   </Link>
                 </p>
               </div>

@@ -160,10 +160,10 @@ const Header = () => {
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
                 <Link
-                  href="/signin"
+                  href="/login"
                   className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
                 >
-                  Sign In
+                  Log In
                 </Link>
                 <Link
                   href="/signup"
