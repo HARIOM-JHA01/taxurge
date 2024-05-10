@@ -1,15 +1,61 @@
+'use client';
 import Link from "next/link";
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Sign Up Page",
-  description: "This is Sign Up Page for TaxUrge",
-};
 
 const SignupPage = () => {
+  const router = useRouter()
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleFullNameChange = (event) => {
+    setFullName(event.target.value);
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/register/`, {
+        fullName,
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
+        // JWT authentication upon successful registration
+        const token = response.data.token; 
+        localStorage.setItem('token', token); // Store the token in local storage
+        toast.success(`${fullName} thank you for sign up`);
+        setTimeout(() => {
+          router.push('/services');
+        }, 5000);
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // Display error message received from the server
+        toast.error(error.response.data.message);
+      } else {
+        // Display a generic error message
+        toast.error('An error occurred. Please try again later.');
+      }
+    }
+  };
   return (
     <>
+    <ToastContainer />
       <section className="relative z-10 overflow-hidden pb-16 pt-36 md:pb-20 lg:pb-28 lg:pt-[180px]">
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
@@ -79,7 +125,7 @@ const SignupPage = () => {
                   </p> */}
                   <span className="hidden h-[1px] w-full max-w-[60px] bg-body-color/50 sm:block"></span>
                 </div>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="mb-8">
                     <label
                       htmlFor="name"
@@ -91,7 +137,9 @@ const SignupPage = () => {
                     <input
                       type="text"
                       name="name"
+                      value={fullName}
                       placeholder="Enter your full name"
+                      onChange={handleFullNameChange}
                       className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
                     />
                   </div>
@@ -106,6 +154,8 @@ const SignupPage = () => {
                     <input
                       type="email"
                       name="email"
+                      value={email}
+                      onChange={handleEmailChange}
                       placeholder="Enter your Email"
                       className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
                     />
@@ -121,6 +171,8 @@ const SignupPage = () => {
                     <input
                       type="password"
                       name="password"
+                      onChange={handlePasswordChange}
+                      value={password}
                       placeholder="Enter your Password"
                       className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
                     />
@@ -170,15 +222,18 @@ const SignupPage = () => {
                     </label>
                   </div>
                   <div className="mb-6">
-                    <button className="shadow-submit dark:shadow-submit-dark flex w-full items-center justify-center rounded-sm bg-primary px-9 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
-                      Sign up
-                    </button>
+                  <button
+              type="submit"
+              className="shadow-submit dark:shadow-submit-dark flex w-full items-center justify-center rounded-sm bg-primary px-9 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90"
+            >
+              Sign up
+            </button>
                   </div>
                 </form>
                 <p className="text-center text-base font-medium text-body-color">
-                  Already using Startup?{" "}
-                  <Link href="/signin" className="text-primary hover:underline">
-                    Sign in
+                  Already using TaxUrge?{" "}
+                  <Link href="/login" className="text-primary hover:underline">
+                    log in
                   </Link>
                 </p>
               </div>
