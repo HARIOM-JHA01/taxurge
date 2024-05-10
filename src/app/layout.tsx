@@ -1,5 +1,6 @@
 "use client";
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -27,6 +28,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Analytics />
+          <SpeedInsights />
           <Footer />
           <ScrollToTop />
         </Providers>
