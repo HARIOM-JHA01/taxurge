@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import AboutSectionOne from "@/components/About/AboutSectionOne";
 import AboutSectionTwo from "@/components/About/AboutSectionTwo";
 import Blog from "@/components/Blog";
@@ -13,8 +15,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Tax Urge",
-  description: "This website is for tax u`rge",
-  // other metadata
+  description: "This website is for tax urge",
+
 };
 
 export default function Home() {
