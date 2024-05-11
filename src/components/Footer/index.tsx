@@ -222,7 +222,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="hover:text-primary"
               >
-              © {currentYear} TaxUrge Pvt Ltd | All Rights Reserved 
+              © {currentYear} TaxUrge | All Rights Reserved 
               </a>
               <a
                 href="#"
