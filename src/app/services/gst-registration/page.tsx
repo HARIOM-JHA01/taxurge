@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "GST Registrstion",
   description: "This is Blog Page for Startup Nextjs Template",
   // other metadata
 };
