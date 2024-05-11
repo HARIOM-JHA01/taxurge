@@ -2,9 +2,13 @@ import Link from "next/link";
 
 const Breadcrumb = ({
   pageName,
+  innerPage,
+  innerPageLink,
   description,
 }: {
   pageName: string;
+  innerPage?: string;
+  innerPageLink?: string;
   description: string;
 }) => {
   return (
@@ -34,6 +38,15 @@ const Breadcrumb = ({
                     </Link>
                     <span className="mr-3 block h-2 w-2 rotate-45 border-r-2 border-t-2 border-body-color"></span>
                   </li>
+                  {innerPage && <li className="flex items-center">
+                    <Link
+                      href={innerPageLink}
+                      className="pr-1 text-base font-medium text-body-color hover:text-primary"
+                    >
+                      {innerPage}
+                    </Link>
+                    <span className="mr-3 block h-2 w-2 rotate-45 border-r-2 border-t-2 border-body-color"></span>
+                  </li>}
                   <li className="text-base font-medium text-primary">
                     {pageName}
                   </li>
