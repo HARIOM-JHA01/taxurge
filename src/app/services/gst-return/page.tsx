@@ -36,7 +36,7 @@ const Gst_resgistration = () => {
         pageName="GST Return"
         innerPage="Our Services"
         innerPageLink="/services"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius eros eget sapien consectetur ultrices. Ut quis dapibus libero."
+        description="GST returns include GSTR-1 for outward supplies (Sales), GSTR-3B summarizing outward and inward supplies and tax liability, GSTR-4 quarterly for Composition Scheme taxpayers, GSTR-9 annually for regular taxpayers, and GSTR-9C for reconciliation and audit reports for specific taxpayers."
       />
 
       <section className="pb-[120px] pt-[120px]">

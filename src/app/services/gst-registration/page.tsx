@@ -16,7 +16,7 @@ const Gst_resgistration = () => {
         pageName="GST Registration"
         innerPage="Our Services"
         innerPageLink="/services"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius eros eget sapien consectetur ultrices. Ut quis dapibus libero."
+        description="Businesses in India can register for GST at any time, with mandatory criteria including turnover thresholds, interstate supply involvement, and e-commerce transactions, ensuring tax compliance and operational ease within the GST framework."
       />
 
       <section className="pb-[120px] pt-[120px]">
