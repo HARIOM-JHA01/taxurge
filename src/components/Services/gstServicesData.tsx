@@ -15,7 +15,7 @@ const gstServicesData: Service[] = [
         decription:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet dictum neque, laoreet dolor.",
         image: "/images/service/GST_Return.jpeg",
-        href: "/"
+        href: "/services/gst-return"
     },
     {
         id: 3,
