@@ -46,9 +46,9 @@ const Gst_resgistration = () => {
               {gstStrings.map((gstString, index) => (
                 <div
                   key={index}
-                  className="card w-72 bg-[#002a7e] text-primary-content"
+                  className="card w-72 transform cursor-pointer bg-[#002a7e] text-primary-content transition duration-300 ease-in-out hover:bg-[#003da5] hover:shadow-lg"
                 >
-                  <div className="card-body justify-center text-center items-center">
+                  <div className="card-body items-center justify-center text-center">
                     <h2 className="card-title text-white">{gstString}</h2>
                   </div>
                 </div>
@@ -56,14 +56,14 @@ const Gst_resgistration = () => {
             </div>
           </div>
 
-          <div className=" mt-10 w-full flex items-end justify-center">
+          <div className=" mt-10 flex w-full items-end justify-center">
             <Link
               href="/signup"
               className=" ease-in-up inline-block rounded-sm bg-primary px-8 py-3 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:px-9 lg:px-6 xl:px-9"
             >
               Get Started
             </Link>
-            </div>
+          </div>
         </div>
       </section>
     </>
