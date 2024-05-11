@@ -13,10 +13,10 @@ const Gst_Registration_Table = () => {
   return (
     <div className=" border border-solid p-4 rounded-lg">
       <Table>
-        <TableCaption>
+        {/* <TableCaption>
           Documents Required for New Registration Application of a Normal
           Taxpayer
-        </TableCaption>
+        </TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="w-[350px] font-extrabold text-lg">Purpose</TableHead>

@@ -21,8 +21,14 @@ const Gst_resgistration = () => {
 
       <section className="pb-[120px] pt-[120px]">
         <div className="container">
+          <div className=" flex w-full items-center justify-center text-center mb-4">
+            <h1 className=" text-2xl font-semibold">
+              Documents Required for New Registration Application of a Normal
+              Taxpayer
+            </h1>
+          </div>
           <Gst_Registration_Table />
-          <div className=" mt-6 w-full flex items-end justify-center">
+          <div className=" mt-6 flex w-full items-end justify-center">
             <Link
               href="/signup"
               className=" ease-in-up inline-block rounded-sm bg-primary px-8 py-3 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:px-9 lg:px-6 xl:px-9"
