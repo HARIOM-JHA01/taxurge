@@ -17,7 +17,9 @@ const Services = () => {
     <>
       <Breadcrumb
         pageName="Our Services"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius eros eget sapien consectetur ultrices. Ut quis dapibus libero."
+        description="GST compliance, income tax planning, tax audits, or accounting
+        services, clients can rely on Goutam Kumar Jha and Sharda Kumari for comprehensive solutions tailored
+        to their specific needs."
       />
 
       <section className="pb-[120px] pt-[120px]">
