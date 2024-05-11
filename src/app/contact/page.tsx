@@ -14,7 +14,7 @@ const ContactPage = () => {
     <>
       <Breadcrumb
         pageName="Contact Page"
-        description="This is Contact Page for Tax Urge website. You can contact us for any query or feedback. We are always here to help you."
+        description="This is Contact Page for Tax Urge website. You can contact us at +91 98305 55575, +91 72784 80575 for any query or feedback. We are always here to help you."
       />
 
       <Contact />

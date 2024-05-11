@@ -52,7 +52,7 @@ const AboutSectionTwo = () => {
               </h3>
               <p className="text-base font-medium leading-relaxed text-body-color sm:text-lg sm:leading-relaxed">
                 {/* Elevate your tax experience with TaxUrge@apos;s advanced tax solutions. Seamlessly navigate */}
-                through your tax filing journey with our innovative approach, providing you with efficient
+                Through your tax filing journey with our innovative approach, providing you with efficient
                 and effective tax solutions.
               </p>
             </div>
