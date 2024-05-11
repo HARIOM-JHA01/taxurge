@@ -19,15 +19,15 @@ const Gst_Registration_Table = () => {
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[350px]">Purpose</TableHead>
-            <TableHead className="w-[300px]">
+            <TableHead className="w-[350px] font-extrabold text-lg">Purpose</TableHead>
+            <TableHead className="w-[300px] font-extrabold text-lg">
               Nature of possession of premises (Own)
             </TableHead>
-            <TableHead className="w-[250px]">
+            <TableHead className="w-[250px] font-extrabold text-lg">
               Nature of possession of premises (Rented/Leased)
             </TableHead>
-            <TableHead className="text-right">Document Type</TableHead>
-            <TableHead className="text-right">Max Size for Upload</TableHead>
+            <TableHead className="text-right font-extrabold text-lg">Document Type</TableHead>
+            <TableHead className="text-right font-extrabold text-lg">Max Size for Upload</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
