@@ -14,8 +14,8 @@ const AboutPage = () => {
   return (
     <>
       <Breadcrumb
-        pageName="About Page"
-        description="Goutam Kumar Jha and Sharda Kumari have more than a decade of experience in the fields of GST
+        pageName="About Us"
+        description="TaxUrge has more than a decade of experience in the fields of GST
         consulting, income tax advisory, tax audits, and accounting."
       />
       {/* <AboutSectionOne /> */}

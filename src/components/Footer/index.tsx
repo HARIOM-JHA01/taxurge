@@ -29,7 +29,7 @@ const Footer = () => {
                   />
                 </Link>
                 <p className="mb-9 text-base leading-relaxed text-body-color dark:text-body-color-dark">
-                  TaxUre is a platform that provides you with the best tax and accounting services. We are here to help you with all your tax-related queries.
+                  TaxUrge is a platform that provides you with the best tax and accounting services. We are here to help you with all your tax-related queries.
                 </p>
                 <div className="flex items-center">
                   <a
