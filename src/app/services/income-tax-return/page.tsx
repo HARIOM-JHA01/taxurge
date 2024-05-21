@@ -13,11 +13,8 @@ const Income_TAX_Return = () => {
       />
 
       <section className="pb-[120px] pt-[120px]">
-        <div className="container justify-center">
-          <h2 className="mb-4 text-2xl font-semibold">
-            Income Tax Return Types
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="container">
+          <div className="-mx-4 flex flex-wrap justify-center gap-4">
             {incomeTaxReturnData.map((returnData) => (
               <div
                 key={returnData.id}
