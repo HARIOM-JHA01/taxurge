@@ -7,7 +7,7 @@ const incomeTaxServicesData: Service[] = [
         decription:
           "ITR-1 and ITR-2 is for individuals and HUFs without business income. ITR-3 is for business income. ITR-4 is for presumptive income. ITR-5 is for firms and LLPs. ITR-6 is for companies. ITR-7 is for specific entities under certain sections. Tax audits are required if business turnover exceeds ₹ 1 crore or professional receipts exceed ₹ 50 lakh.",
         image: "/images/service/ITR.jpeg",
-        href: "/",
+        href: "/services/income-tax-return",
     },
     {
         id: 2,
