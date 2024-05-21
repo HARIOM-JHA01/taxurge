@@ -23,7 +23,7 @@ const gstServicesData: Service[] = [
         decription:
           "GST tax authorities may initiate assessments based on several factors, including identifying discrepancies or inconsistencies in GST returns filed by taxpayers, random selection for audit or scrutiny, and information obtained from third-party sources or through intelligence gathering mechanisms.",
         image: "/images/service/GST_Assesment.jpeg",
-        href: "/"
+        href: "/services/gst-assesment"
     }
 ]
  
