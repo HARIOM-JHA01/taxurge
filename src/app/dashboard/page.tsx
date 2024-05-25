@@ -24,7 +24,6 @@ const Dashboard = () => {
       const selectedFiles = Array.from(event.target.files);
       setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 
-      // Clear the input field after selecting files
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
