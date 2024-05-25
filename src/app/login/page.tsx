@@ -17,9 +17,10 @@ const SigninPage = () => {
     try {
     
       const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/login`, { email, password });
-      const { token } = response.data;
+      const { token, fullName } = response.data;
       // Store JWT in localStorage or sessionStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("name", fullName);
       // Redirect to a different page after successful sign-in
       router.push("/dashboard");
     } catch (error) {
