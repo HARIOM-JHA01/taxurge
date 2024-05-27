@@ -57,58 +57,8 @@ const Dashboard = () => {
 
       <section className="pb-[190px] pt-[10px]">
         <div className="container">
-          <div className="flex w-full items-center justify-between">
-            <Tabs
-              defaultValue="payment"
-              className="w-[500px]"
-              onValueChange={(value) => setActiveTab2(value)}
-            >
-              <TabsList className="grid h-10 w-full grid-cols-2 border border-solid">
-                <TabsTrigger
-                  value="balance"
-                  className={clsx(
-                    activeTab2 === "balance" && "bg-[#002a7e] text-white",
-                  )}
-                >
-                  Balance
-                </TabsTrigger>
-                <TabsTrigger
-                  value="payment"
-                  className={clsx(
-                    activeTab2 === "payment" && "bg-[#002a7e] text-white",
-                  )}
-                >
-                  Payment
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="balance">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Balance</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    Remaining Balane : RS. 500
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="payment">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Make Payment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 flex justify-center items-start">
-                    <Image
-                      src="/images/payment/default_qrcode.png"
-                      width={100}
-                      height={100}
-                      alt="QR Code"
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-            <Tabs
+          <div className="flex w-full items-center justify-center gap-10">
+          <Tabs
               defaultValue="upload"
               className="w-[500px]"
               onValueChange={(value) => setActiveTab(value)}
@@ -175,6 +125,56 @@ const Dashboard = () => {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     Download Your Files Here
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+            <Tabs
+              defaultValue="payment"
+              className="w-[500px]"
+              onValueChange={(value) => setActiveTab2(value)}
+            >
+              <TabsList className="grid h-10 w-full grid-cols-2 border border-solid">
+                <TabsTrigger
+                  value="balance"
+                  className={clsx(
+                    activeTab2 === "balance" && "bg-[#002a7e] text-white",
+                  )}
+                >
+                  Balance
+                </TabsTrigger>
+                <TabsTrigger
+                  value="payment"
+                  className={clsx(
+                    activeTab2 === "payment" && "bg-[#002a7e] text-white",
+                  )}
+                >
+                  Payment
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="balance">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Balance</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    Remaining Balane : RS. 500
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="payment">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Make Payment</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 flex justify-center items-start">
+                    <Image
+                      src="/images/payment/default_qrcode.png"
+                      width={100}
+                      height={100}
+                      alt="QR Code"
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>
