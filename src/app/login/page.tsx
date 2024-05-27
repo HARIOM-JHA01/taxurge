@@ -15,18 +15,23 @@ const SigninPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-    
-      const response = await axios.post(`${"https://seahorse-app-kcu4q.ondigitalocean.app"}/api/login`, { email, password });
-      const { token } = response.data;
-      // Store JWT in localStorage or sessionStorage
+      const response = await axios.post('https://seahorse-app-kcu4q.ondigitalocean.app/api/login', { email, password });
+      const { token, name } = response.data;
+      console.log(response.data);
+  
+      // Store JWT and full name in localStorage
       localStorage.setItem("token", token);
-      // Redirect to a different page after successful sign-in
+      localStorage.setItem("name", name);
+  
+      // Redirect to the dashboard page after successful sign-in
       router.push("/dashboard");
     } catch (error) {
-      setError(error.response.data.message);
-      toast.error(error.response.data.message);
+      const errorMessage = error.response?.data?.message || 'An error occurred';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
+  
   return (
     <>
       <section className="relative z-10 overflow-hidden pb-16 pt-36 md:pb-20 lg:pb-28 lg:pt-[180px]">

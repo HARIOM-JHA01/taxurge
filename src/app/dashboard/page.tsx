@@ -1,7 +1,8 @@
 "use client";
 
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +17,13 @@ import clsx from "clsx";
 import Image from "next/image";
 
 const Dashboard = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+    }
+  })
   const [files, setFiles] = useState<File[]>([]);
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [activeTab2, setActiveTab2] = useState<string>("payment");
