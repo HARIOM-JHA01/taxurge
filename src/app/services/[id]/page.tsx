@@ -25,7 +25,7 @@ const Common_Service = () => {
           <div className="card w-96 bg-[#002a7e] text-neutral-content">
             <div className="card-body items-center text-center">
               <h2 className="card-title">Please Contact on the below provided phone number</h2>
-              <p>+911234567890</p>
+              <p>+91 98305 55575</p>
             </div>
           </div>
         </div>

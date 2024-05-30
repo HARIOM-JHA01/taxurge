@@ -36,11 +36,12 @@ const SignupPage = () => {
 
       if (response.status === 201) {
         // JWT authentication upon successful registration
-        const token = response.data.token; 
+        const { token, name } = response.data;
         localStorage.setItem('token', token); // Store the token in local storage
+        localStorage.setItem("name", name);
         toast.success(`${fullName} thank you for sign up`);
         setTimeout(() => {
-          router.push('/services');
+          router.push('/dashboard');
         }, 5000);
       }
     } catch (error) {
