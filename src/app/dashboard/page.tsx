@@ -1,8 +1,9 @@
 "use client";
-
-import Breadcrumb from "@/components/Common/Breadcrumb";
 import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import Breadcrumb from "@/components/Common/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,16 +19,36 @@ import Image from "next/image";
 
 const Dashboard = () => {
   const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("upload");
+  const [activeTab2, setActiveTab2] = useState<string>("payment");
+  const [balance, setBalance] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/");
+    } else {
+      fetchBalance(token);
     }
-  })
-  const [files, setFiles] = useState<File[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("upload");
-  const [activeTab2, setActiveTab2] = useState<string>("payment");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  }, []);
+
+  const fetchBalance = async (token: string) => {
+    try {
+      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/balance', {
+        headers: {
+          'token': token,
+        },
+      });
+      const data = await response.json();
+      toast.success("Balance fetched successfully!");
+      setBalance(data); // Assuming the API response contains a balance field
+    } catch (error) {
+      toast.error("Error fetching balance.");
+      console.error("Error fetching balance:", error);
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -44,12 +65,87 @@ const Dashboard = () => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const handleSaveChanges = () => {
-    console.log("Uploaded files:", files);
+  const handleSaveChanges = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        router.push("/");
+        return;
+    }
+
+    const formData = new FormData();
+    files.forEach((file) => {
+        formData.append('uploadedDocuments', file);
+    });
+
+    try {
+        const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/upload', {
+            method: 'POST',
+            headers: {
+                'token': token,
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            toast.success("Files uploaded successfully");
+        } else {
+            const errorText = await response.text(); // Get the error message from the server
+            toast.error(`Failed to upload files: ${errorText}`);
+            console.error(`Failed to upload files: ${errorText}`);
+        }
+    } catch (error) {
+        toast.error("Error uploading files.");
+        console.error("Error uploading files:", error);
+    }
+};
+
+  
+
+  const handleDownload = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+  
+    try {
+      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/download', {
+        headers: {
+          'token': token,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.files) && data.files.length > 0) {
+          for (const file of data.files) {
+            const response = await fetch(file.url);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name || 'coolFileName'; // Use the file name from response or a default name
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }
+          toast.success("Files downloaded successfully!");
+        } else {
+          toast.info("No files available for download.");
+        }
+      } else {
+        toast.error("Failed to download files.");
+      }
+    } catch (error) {
+      toast.error("Error downloading files.");
+      console.error("Error downloading files:", error);
+    }
   };
+  
 
   return (
     <>
+      <ToastContainer />
       <Breadcrumb
         pageName="Dashboard"
         description="Welcome to TaxUrge Dashboard"
@@ -58,7 +154,7 @@ const Dashboard = () => {
       <section className="pb-[190px] pt-[10px]">
         <div className="container">
           <div className="flex w-full items-center justify-center gap-10">
-          <Tabs
+            <Tabs
               defaultValue="upload"
               className="w-[500px]"
               onValueChange={(value) => setActiveTab(value)}
@@ -95,7 +191,7 @@ const Dashboard = () => {
                         <span>{file.name}</span>
                         <Button
                           variant={"link"}
-                          className=" text-white"
+                          className="text-white"
                           size="sm"
                           onClick={() => handleRemoveFile(index)}
                         >
@@ -107,7 +203,7 @@ const Dashboard = () => {
                       type="file"
                       onChange={handleFileChange}
                       ref={fileInputRef}
-                      className=" pt-[6px]"
+                      className="pt-[6px]"
                     />
                   </CardContent>
                   <CardFooter>
@@ -124,7 +220,9 @@ const Dashboard = () => {
                     <CardTitle>Download Files</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    Download Your Files Here
+                    <Button onClick={handleDownload} className="text-white">
+                      Download Files
+                    </Button>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -158,7 +256,7 @@ const Dashboard = () => {
                     <CardTitle>Balance</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    Remaining Balane : RS. 500
+                    {balance !== null ? `Remaining Balance: RS. ${balance}` : "Loading..."}
                   </CardContent>
                 </Card>
               </TabsContent>
