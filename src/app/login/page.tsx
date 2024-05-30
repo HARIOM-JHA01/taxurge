@@ -17,7 +17,6 @@ const SigninPage = () => {
     try {
       const response = await axios.post('https://seahorse-app-kcu4q.ondigitalocean.app/api/login', { email, password });
       const { token, name } = response.data;
-      console.log(response.data);
   
       // Store JWT and full name in localStorage
       localStorage.setItem("token", token);
