@@ -43,7 +43,7 @@ const Dashboard = () => {
       });
       const data = await response.json();
       toast.success("Balance fetched successfully!");
-      setBalance(data); // Assuming the API response contains a balance field
+      setBalance(data);
     } catch (error) {
       toast.error("Error fetching balance.");
       console.error("Error fetching balance:", error);
@@ -89,7 +89,7 @@ const Dashboard = () => {
         if (response.ok) {
             toast.success("Files uploaded successfully");
         } else {
-            const errorText = await response.text(); // Get the error message from the server
+            const errorText = await response.text(); 
             toast.error(`Failed to upload files: ${errorText}`);
             console.error(`Failed to upload files: ${errorText}`);
         }
@@ -124,7 +124,7 @@ const Dashboard = () => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = file.name || 'coolFileName'; // Use the file name from response or a default name
+            a.download = file.name || 'FileName'; 
             document.body.appendChild(a);
             a.click();
             a.remove();
