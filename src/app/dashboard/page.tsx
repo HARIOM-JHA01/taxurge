@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [activeTab2, setActiveTab2] = useState<string>("payment");
   const [balance, setBalance] = useState<number | null>(null);
+  const [fileList, setFileList] = useState<{ name: string, url: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const Dashboard = () => {
       router.push("/");
     } else {
       fetchBalance(token);
+      fetchFileList(token);
     }
   }, []);
 
@@ -47,6 +49,30 @@ const Dashboard = () => {
     } catch (error) {
       toast.error("Error fetching balance.");
       console.error("Error fetching balance:", error);
+    }
+  };
+
+  const fetchFileList = async (token: string) => {
+    try {
+      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/download', {
+        headers: {
+          'token': token,
+        },
+      });
+
+      if (response.ok) {
+        const data: string[] = await response.json();
+        const files = data.map(url => ({
+          name: url.split('/').pop() || 'File',
+          url,
+        }));
+        setFileList(files);
+      } else {
+        toast.error("Failed to fetch file list.");
+      }
+    } catch (error) {
+      toast.error("Error fetching file list.");
+      console.error("Error fetching file list:", error);
     }
   };
 
@@ -68,80 +94,55 @@ const Dashboard = () => {
   const handleSaveChanges = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-        router.push("/");
-        return;
+      router.push("/");
+      return;
     }
 
     const formData = new FormData();
     files.forEach((file) => {
-        formData.append('uploadedDocuments', file);
+      formData.append('uploadedDocuments', file);
     });
 
     try {
-        const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/upload', {
-            method: 'POST',
-            headers: {
-                'token': token,
-            },
-            body: formData,
-        });
-
-        if (response.ok) {
-            toast.success("Files uploaded successfully");
-        } else {
-            const errorText = await response.text(); 
-            toast.error(`Failed to upload files: ${errorText}`);
-            console.error(`Failed to upload files: ${errorText}`);
-        }
-    } catch (error) {
-        toast.error("Error uploading files.");
-        console.error("Error uploading files:", error);
-    }
-};
-
-  
-
-  const handleDownload = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/");
-      return;
-    }
-  
-    try {
-      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/download', {
+      toast.info("Uploading...");
+      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/upload', {
+        method: 'POST',
         headers: {
           'token': token,
         },
+        body: formData,
       });
-  
+
       if (response.ok) {
-        const data = await response.json();
-        if (Array.isArray(data.files) && data.files.length > 0) {
-          for (const file of data.files) {
-            const response = await fetch(file.url);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name || 'FileName'; 
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-          }
-          toast.success("Files downloaded successfully!");
-        } else {
-          toast.info("No files available for download.");
-        }
+        toast.success("Files uploaded successfully");
+        fetchFileList(token); // Refresh file list after upload
       } else {
-        toast.error("Failed to download files.");
+        const errorText = await response.text();
+        toast.error(`Failed to upload files: ${errorText}`);
+        console.error(`Failed to upload files: ${errorText}`);
       }
     } catch (error) {
-      toast.error("Error downloading files.");
-      console.error("Error downloading files:", error);
+      toast.error("Error uploading files.");
+      console.error("Error uploading files:", error);
     }
   };
-  
+
+  const handleDownloadFile = async (fileUrl: string, fileName: string) => {
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      toast.error("Error downloading file.");
+      console.error("Error downloading file:", error);
+    }
+  };
 
   return (
     <>
@@ -201,6 +202,7 @@ const Dashboard = () => {
                     ))}
                     <Input
                       type="file"
+                      multiple
                       onChange={handleFileChange}
                       ref={fileInputRef}
                       className="pt-[6px]"
@@ -220,9 +222,26 @@ const Dashboard = () => {
                     <CardTitle>Download Files</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button onClick={handleDownload} className="text-white">
-                      Download Files
-                    </Button>
+                    {fileList.length > 0 ? (
+                      fileList.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded-md border border-solid bg-[#002a7e] p-[0.3rem] text-white"
+                        >
+                          <span>{file.name}</span>
+                          <Button
+                            variant={"link"}
+                            className="text-white"
+                            size="sm"
+                            onClick={() => handleDownloadFile(file.url, file.name)}
+                          >
+                            Download
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No files available for download.</p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
