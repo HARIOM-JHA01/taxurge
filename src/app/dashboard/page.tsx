@@ -59,10 +59,14 @@ const Dashboard = () => {
           'token': token,
         },
       });
-      console.log(response);
+
       if (response.ok) {
-        const data = await response.json();
-        setFileList(data.files || ["Hello"]);
+        const data: string[] = await response.json();
+        const files = data.map(url => ({
+          name: url.split('/').pop() || 'File',
+          url,
+        }));
+        setFileList(files);
       } else {
         toast.error("Failed to fetch file list.");
       }
