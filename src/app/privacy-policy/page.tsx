@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
               </p>
               <h2>No warranties</h2>
               <p>
-                This website is provided "as is," with all faults, and Example Company express no representations or
+                This website is provided &quot;as is,&quot; with all faults, and Example Company express no representations or
                 warranties, of any kind related to this website or the materials contained on this website. Also,
                 nothing contained on this website shall be interpreted as advising you.
               </p>
