@@ -13,7 +13,7 @@ export default function TermsOfService() {
             <div className="prose prose-gray max-w-none">
               <p>
                 Welcome to our Terms of Service! These terms and conditions outline the rules and regulations for the
-                use of Example Company's Website, located at http://www.example.com.
+                use of Example Company&apos;s Website, located at http://www.example.com.
               </p>
               <h2>Intellectual Property</h2>
               <p>
@@ -51,7 +51,7 @@ export default function TermsOfService() {
               </p>
               <h2>No warranties</h2>
               <p>
-                This website is provided "as is," with all faults, and Example Company express no representations or
+                This website is provided &quot;as is,&quot; with all faults, and Example Company express no representations or
                 warranties, of any kind related to this website or the materials contained on this website. Also,
                 nothing contained on this website shall be interpreted as advising you.
               </p>
