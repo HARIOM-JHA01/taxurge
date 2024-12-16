@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-export default function TermsOfService() {
+export default function PrivacyPolicy() {
   return (
     <div className="mt-16">
       <div>
@@ -8,12 +8,12 @@ export default function TermsOfService() {
           <div className="space-y-6">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter">Privacy Policy</h1>
-              <p className="text-gray-500 dark:text-gray-400">Last updated: January 1, 2023</p>
+              <p className="text-gray-500 dark:text-gray-400">Last updated: Aug 1, 2024</p>
             </div>
             <div className="prose prose-gray max-w-none">
               <p>
                 Welcome to our Terms of Service! These terms and conditions outline the rules and regulations for the
-                use of Example Company's Website, located at http://www.example.com.
+                use of Example Company&apos;s Website, located at http://www.taxurge.com
               </p>
               <h2>Intellectual Property</h2>
               <p>
@@ -96,15 +96,15 @@ export default function TermsOfService() {
       </div>
       <div>
         <div className="flex items-center justify-center space-x-4 text-sm">
-          <Link href="#" className="font-medium" prefetch={false}>
+          <Link href="/terms-of-service" className="font-medium" prefetch={false}>
             Terms of Service
           </Link>
-          <Link href="#" className="font-medium" prefetch={false}>
+          <Link href="privacy-policy" className="font-medium" prefetch={false}>
             Privacy Policy
           </Link>
-          <Link href="#" className="font-medium" prefetch={false}>
+            <Link href="mailto:jhahariom040@gmail.com" className="font-medium" prefetch={false}>
             Contact Us
-          </Link>
+            </Link>
         </div>
       </div>
     </div>
