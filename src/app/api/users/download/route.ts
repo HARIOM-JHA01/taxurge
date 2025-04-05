@@ -3,10 +3,13 @@ import { verifyToken } from '@/lib/auth';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
-    // Get token from headers
-    const token = request.headers.get('token');
+    // Get token from URL search params
+    const { searchParams } = new URL(request.url);
+    const token = searchParams.get('token');
     if (!token) {
       return NextResponse.json(
         { message: 'Authentication required' },

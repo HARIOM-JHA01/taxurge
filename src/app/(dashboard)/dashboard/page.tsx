@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import incomeTaxServicesData from "@/components/Services/incomeTaxServicesData";
 import { Service } from "@/types/service";
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
 
-const Dashboard = () => {
+const DashboardContent = () => {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const searchParams = useSearchParams();
@@ -341,6 +341,14 @@ const Dashboard = () => {
         </Button>
       </div>
     </div>
+  );
+};
+
+const Dashboard = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 };
 
