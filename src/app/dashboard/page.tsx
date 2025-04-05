@@ -1,60 +1,58 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import Breadcrumb from "@/components/Common/Breadcrumb";
-import { Button } from "@/components/ui/button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
+import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
 import clsx from "clsx";
 import Image from "next/image";
+import { Service } from "../../types/service";
 
 const Dashboard = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [files, setFiles] = useState<File[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("upload");
-  const [activeTab2, setActiveTab2] = useState<string>("payment");
-  const [balance, setBalance] = useState<number | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [fileList, setFileList] = useState<{ name: string, url: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'services' | 'documents'>('services');
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
     if (!token) {
-      router.push("/");
+      router.push("/login");
     } else {
-      fetchBalance(token);
+      setUserName(name);
       fetchFileList(token);
     }
-  }, []);
 
-  const fetchBalance = async (token: string) => {
-    try {
-      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/balance', {
-        headers: {
-          'token': token,
-        },
-      });
-      const data = await response.json();
-      toast.success("Balance fetched successfully!");
-      setBalance(data);
-    } catch (error) {
-      toast.error("Error fetching balance.");
-      console.error("Error fetching balance:", error);
+    // Check if we should show documents view
+    const view = searchParams.get('view');
+    if (view === 'documents') {
+      setViewMode('documents');
+    } else {
+      setViewMode('services');
     }
+  }, [searchParams, router]);
+
+  const handleServiceSelect = (service: Service) => {
+    setSelectedService(service);
   };
 
   const fetchFileList = async (token: string) => {
+    setIsLoading(true);
     try {
-      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/download', {
+      const response = await fetch('/api/users/download', {
         headers: {
           'token': token,
         },
@@ -73,6 +71,8 @@ const Dashboard = () => {
     } catch (error) {
       toast.error("Error fetching file list.");
       console.error("Error fetching file list:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,21 +91,22 @@ const Dashboard = () => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const handleSaveChanges = async () => {
+  const handleUpload = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/");
+    if (!token || !files.length) {
+      toast.error("Please select files to upload");
       return;
     }
 
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append('uploadedDocuments', file);
-    });
-
+    setIsUploading(true);
     try {
       toast.info("Uploading...");
-      const response = await fetch('https://seahorse-app-kcu4q.ondigitalocean.app/api/users/upload', {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append('uploadedDocuments', file);
+      });
+
+      const response = await fetch('/api/users/upload', {
         method: 'POST',
         headers: {
           'token': token,
@@ -115,6 +116,7 @@ const Dashboard = () => {
 
       if (response.ok) {
         toast.success("Files uploaded successfully");
+        setFiles([]);
         fetchFileList(token); // Refresh file list after upload
       } else {
         const errorText = await response.text();
@@ -124,6 +126,8 @@ const Dashboard = () => {
     } catch (error) {
       toast.error("Error uploading files.");
       console.error("Error uploading files:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -145,161 +149,143 @@ const Dashboard = () => {
   };
 
   return (
-    <>
-      <ToastContainer />
-      <Breadcrumb
-        pageName="Dashboard"
-        description="Welcome to TaxUrge Dashboard"
-      />
+    <section className="py-6 px-4 md:px-6">
+      <div className="max-w-7xl mx-auto">
+          {/* Welcome Section */}
+          <Card className="mb-8 border-none shadow-md">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-3xl font-bold text-primary">
+                Welcome, {userName || 'User'}!
+              </CardTitle>
+              <p className="text-gray-600 dark:text-gray-400">
+                {viewMode === 'services' 
+                  ? 'Select a service to get started with your document submission.' 
+                  : 'View and manage your uploaded documents.'}
+              </p>
+            </CardHeader>
+          </Card>
 
-      <section className="pb-[190px] pt-[10px]">
-        <div className="container">
-          <div className="flex w-full items-center justify-center gap-10">
-            <Tabs
-              defaultValue="upload"
-              className="w-[500px]"
-              onValueChange={(value) => setActiveTab(value)}
-            >
-              <TabsList className="grid h-10 w-full grid-cols-2 border border-solid">
-                <TabsTrigger
-                  value="upload"
-                  className={clsx(
-                    activeTab === "upload" && "bg-[#002a7e] text-white",
-                  )}
-                >
-                  Upload
-                </TabsTrigger>
-                <TabsTrigger
-                  value="download"
-                  className={clsx(
-                    activeTab === "download" && "bg-[#002a7e] text-white",
-                  )}
-                >
-                  Download
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="upload">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upload Files</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {files.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between rounded-md border border-solid bg-[#002a7e] p-[0.3rem] text-white"
-                      >
-                        <span>{file.name}</span>
-                        <Button
-                          variant={"link"}
-                          className="text-white"
-                          size="sm"
-                          onClick={() => handleRemoveFile(index)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
+          {viewMode === 'services' && !selectedService && (
+            <Card className="mb-8 border-none shadow-md">
+              <CardHeader className="pb-2 border-b">
+                <CardTitle>Please select a service from the sidebar</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <p className="text-gray-600 dark:text-gray-400">
+                  Choose a service from the sidebar to view details and upload documents.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Document Upload Section */}
+          {viewMode === 'services' && selectedService && (
+            <Card className="mb-8 border-none shadow-md">
+              <CardHeader className="pb-2 border-b">
+                <CardTitle>Upload Documents for {selectedService.title}</CardTitle>
+                <p className="text-sm text-gray-500 mt-2">{selectedService.description}</p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Input
+                      ref={fileInputRef}
                       type="file"
                       multiple
                       onChange={handleFileChange}
-                      ref={fileInputRef}
-                      className="pt-[6px]"
+                      className="cursor-pointer"
                     />
-                  </CardContent>
-                  <CardFooter>
-                    <Button onClick={handleSaveChanges} className="text-white">
-                      Save changes
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </TabsContent>
+                  </div>
 
-              <TabsContent value="download">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Download Files</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {fileList.length > 0 ? (
-                      fileList.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between rounded-md border border-solid bg-[#002a7e] p-[0.3rem] text-white"
-                        >
-                          <span>{file.name}</span>
-                          <Button
-                            variant={"link"}
-                            className="text-white"
-                            size="sm"
-                            onClick={() => handleDownloadFile(file.url, file.name)}
+                  {files.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">Selected Files:</h3>
+                      <ul className="space-y-2">
+                        {files.map((file, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center justify-between rounded-lg bg-gray-100 p-3 dark:bg-gray-800"
                           >
-                            Download
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No files available for download.</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-            <Tabs
-              defaultValue="payment"
-              className="w-[500px]"
-              onValueChange={(value) => setActiveTab2(value)}
-            >
-              <TabsList className="grid h-10 w-full grid-cols-2 border border-solid">
-                <TabsTrigger
-                  value="balance"
-                  className={clsx(
-                    activeTab2 === "balance" && "bg-[#002a7e] text-white",
+                            <span className="truncate">{file.name}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveFile(index)}
+                              className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            >
+                              Remove
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
-                >
-                  Balance
-                </TabsTrigger>
-                <TabsTrigger
-                  value="payment"
-                  className={clsx(
-                    activeTab2 === "payment" && "bg-[#002a7e] text-white",
-                  )}
-                >
-                  Payment
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="balance">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Balance</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {balance !== null ? `Remaining Balance: RS. ${balance}` : "Loading..."}
-                  </CardContent>
-                </Card>
-              </TabsContent>
 
-              <TabsContent value="payment">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Make Payment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 flex justify-center items-start">
-                    <Image
-                      src="/images/payment/default_qrcode.png"
-                      width={100}
-                      height={100}
-                      alt="QR Code"
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+                  <Button
+                    onClick={handleUpload}
+                    disabled={isUploading || files.length === 0}
+                    className="w-full sm:w-auto"
+                  >
+                    {isUploading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Uploading...
+                      </>
+                    ) : (
+                      'Upload Documents'
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Uploaded Documents Section */}
+          {viewMode === 'documents' && (
+            <Card className="border-none shadow-md">
+              <CardHeader className="pb-2 border-b">
+                <CardTitle>Uploaded Documents</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+              {isLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+              ) : fileList.length > 0 ? (
+                <ul className="space-y-2">
+                  {fileList.map((file, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center justify-between rounded-lg bg-gray-100 p-3 dark:bg-gray-800"
+                    >
+                      <span className="truncate">{file.name}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadFile(file.url, file.name)}
+                        className="ml-2"
+                      >
+                        Download
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-600 dark:text-gray-400">No documents have been uploaded yet.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          )}
         </div>
       </section>
-    </>
   );
 };
 

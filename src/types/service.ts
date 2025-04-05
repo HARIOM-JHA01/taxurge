@@ -1,7 +1,8 @@
 export type Service = {
     id: number,
     title: string,
-    decription: string,
+    description: string,
+    features?: string[],
     image: string,
     href: string,
 }
