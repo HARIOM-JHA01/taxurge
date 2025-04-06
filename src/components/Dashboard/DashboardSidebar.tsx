@@ -1,10 +1,18 @@
 "use client";
 import React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gstServicesData from "@/components/Services/gstServicesData";
 import incomeTaxServicesData from "@/components/Services/incomeTaxServicesData";
 import { Service } from "@/types/service";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 type DashboardSidebarProps = {
   activeService: Service | null;
@@ -13,11 +21,11 @@ type DashboardSidebarProps = {
   onTabChange: (tab: string) => void;
 };
 
-const DashboardSidebar = ({ 
-  activeService, 
+const DashboardSidebar = ({
+  activeService,
   onServiceSelect,
   activeTab,
-  onTabChange
+  onTabChange,
 }: DashboardSidebarProps) => {
   const router = useRouter();
 
@@ -28,78 +36,92 @@ const DashboardSidebar = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="p-4 border-b">
-        <h2 className="text-xl font-bold text-primary">Dashboard</h2>
+    <div className="w-full h-full flex flex-col bg-white dark:bg-gray-900 shadow-lg rounded-lg">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <h2 className="text-2xl font-bold text-primary tracking-tight">Dashboard</h2>
       </div>
 
-      <div className="flex-1 overflow-auto p-4 space-y-6">
-        {/* Services Section */}
-        <div>
-          <h3 className="text-lg font-semibold mb-3">Services</h3>
-          
-          {/* GST Services */}
-          <div className="mb-4">
-            <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">GST Services</h4>
-            <ul className="space-y-1">
-              {gstServicesData.map((service) => (
-                <li key={service.id}>
-                  <button
-                    onClick={() => onServiceSelect(service)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm ${activeService?.id === service.id
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                      }`}
-                  >
-                    {service.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <div className="flex-1 overflow-auto py-6 px-4 space-y-8">
+        <NavigationMenu orientation="vertical" className="w-full max-w-none">
+          <NavigationMenuList className="flex-col items-start space-y-6">
+            {/* Services Section */}
+            <NavigationMenuItem className="w-full">
+              <NavigationMenuTrigger 
+                className="w-full text-lg font-semibold bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 px-4 py-3 rounded-lg transition-all duration-200"
+              >
+                Services
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="w-full p-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800">
+                {/* GST Services */}
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 px-3">
+                    GST Services
+                  </h4>
+                  <ul className="space-y-2">
+                    {gstServicesData.map((service) => (
+                      <li key={service.id}>
+                        <button
+                          onClick={() => onServiceSelect(service)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
+                            activeService?.id === service.id
+                              ? "bg-primary text-white font-medium shadow-md"
+                              : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          {service.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-          {/* Income Tax Services */}
-          <div>
-            <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Income Tax Services</h4>
-            <ul className="space-y-1">
-              {incomeTaxServicesData.map((service) => (
-                <li key={service.id}>
-                  <button
-                    onClick={() => onServiceSelect(service)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm ${activeService?.id === service.id
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                      }`}
-                  >
-                    {service.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+                {/* Income Tax Services */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 px-3">
+                    Income Tax Services
+                  </h4>
+                  <ul className="space-y-2">
+                    {incomeTaxServicesData.map((service) => (
+                      <li key={service.id}>
+                        <button
+                          onClick={() => onServiceSelect(service)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
+                            activeService?.id === service.id
+                              ? "bg-primary text-white font-medium shadow-md"
+                              : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          {service.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-        {/* Documents Section */}
-        <div>
-          <h3 className="text-lg font-semibold mb-3">Documents</h3>
-          <ul className="space-y-1">
-            <li>
+            {/* Documents Section */}
+            <NavigationMenuItem className="w-full">
               <button
                 onClick={() => onTabChange('documents')}
-                className={`block w-full text-left px-3 py-2 rounded-md text-sm ${activeTab === 'documents' ? "bg-primary/10 text-primary font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
+                  activeTab === 'documents'
+                    ? "bg-primary text-white font-medium shadow-md"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                }`}
               >
                 Uploaded Documents
               </button>
-            </li>
-          </ul>
-        </div>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
 
       {/* Logout Button */}
-      <div className="p-4 border-t mt-auto">
+      <div className="p-6 border-t border-gray-200 dark:border-gray-800 mt-auto">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
+          className="w-full flex items-center justify-center px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -17,12 +17,26 @@ import incomeTaxServicesData from "@/components/Services/incomeTaxServicesData";
 import { Service } from "@/types/service";
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
 
-const DashboardContent = () => {
+interface DashboardContentProps {
+  selectedService?: Service | null;
+}
+
+const DashboardContent = ({ selectedService: initialSelectedService }: DashboardContentProps) => {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const searchParams = useSearchParams();
   const [files, setFiles] = useState<File[]>([]);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(initialSelectedService || null);
+  const [services] = useState([
+    ...gstServicesData,
+    ...incomeTaxServicesData
+  ]);
+
+  useEffect(() => {
+    if (initialSelectedService) {
+      setSelectedService(initialSelectedService);
+      setActiveTab('services');
+    }
+  }, [initialSelectedService]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [fileList, setFileList] = useState<{ name: string, url: string }[]>([]);
@@ -50,8 +64,10 @@ const DashboardContent = () => {
   }, [searchParams, router]);
 
   const handleServiceSelect = (service: Service) => {
-    setSelectedService(service);
-    setActiveTab('services');
+    if (service.id !== selectedService?.id) {
+      setSelectedService(service);
+      setActiveTab('services');
+    }
   };
 
   const fetchFileList = async (token: string) => {
@@ -85,7 +101,7 @@ const DashboardContent = () => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
       setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-
+  
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -157,197 +173,160 @@ const DashboardContent = () => {
     <div className="flex flex-col flex-1 w-full">
       <main className="flex-1 overflow-y-auto focus:outline-none">
         <div className="py-6 px-4 sm:px-6 lg:px-8">
-            {/* Welcome Section */}
-            <Card className="mb-8 border-none shadow-md">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-3xl font-bold text-primary">
-                  Welcome, {userName || 'User'}!
-                </CardTitle>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {activeTab === 'services' 
-                    ? 'Select a service to get started with your document submission.' 
-                    : 'View and manage your uploaded documents.'}
-                </p>
-              </CardHeader>
-            </Card>
+          <Tabs defaultValue="services" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger value="payment">Payment</TabsTrigger>
+            </TabsList>
 
-            {/* Tabs for mobile view */}
-            <div className="md:hidden mb-6">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="services">Services</TabsTrigger>
-                  <TabsTrigger value="documents">Documents</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
-            {/* Content based on active tab */}
-            {activeTab === 'services' && (
-              <div className="space-y-8">
-                {!selectedService ? (
-                  <Card className="border-none shadow-md">
-                    <CardHeader className="pb-2 border-b">
-                      <CardTitle>Please select a service</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-6">
-                      <p className="text-gray-600 dark:text-gray-400">
-                        Choose a service from the sidebar to view details and upload documents.
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <>
-                    {/* Service Details Section */}
-                    <Card className="border-none shadow-md">
-                      <CardHeader className="pb-2 border-b">
-                        <CardTitle>{selectedService.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <div className="prose dark:prose-invert max-w-none">
-                          <p className="text-gray-600 dark:text-gray-400">{selectedService.description}</p>
-                          {selectedService?.features && (
-                            <div className="mt-6">
-                              <h3 className="text-lg font-semibold mb-4">Features & Requirements</h3>
-                              <ul className="list-disc pl-5 space-y-2">
-                                {selectedService.features.map((feature, index) => (
-                                  <li key={index} className="text-gray-600 dark:text-gray-400">{feature}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Document Upload Section */}
-                    <Card className="border-none shadow-md">
-                      <CardHeader className="pb-2 border-b">
-                        <CardTitle>Upload Documents for {selectedService.title}</CardTitle>
-                        <p className="text-sm text-gray-500 mt-2">{selectedService.description}</p>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <div className="space-y-6">
-                          <div className="grid w-full max-w-sm items-center gap-1.5">
-                            <Input
-                              ref={fileInputRef}
-                              type="file"
-                              multiple
-                              onChange={handleFileChange}
-                              className="cursor-pointer"
-                            />
-                          </div>
-
-                          {files.length > 0 && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-4">Selected Files:</h3>
-                              <ul className="space-y-2">
-                                {files.map((file, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center justify-between rounded-lg bg-gray-100 p-3 dark:bg-gray-800"
-                                  >
-                                    <span className="truncate">{file.name}</span>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleRemoveFile(index)}
-                                      className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                    >
-                                      Remove
-                                    </Button>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          <Button
-                            onClick={handleUpload}
-                            disabled={isUploading || files.length === 0}
-                            className="w-full sm:w-auto"
-                          >
-                            {isUploading ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Uploading...
-                              </>
-                            ) : (
-                              'Upload Documents'
-                            )}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Uploaded Documents Section */}
-            {activeTab === 'documents' && (
-              <Card className="border-none shadow-md">
-                <CardHeader className="pb-2 border-b">
-                  <CardTitle>Uploaded Documents</CardTitle>
+            <TabsContent value="services">
+              <Card className="border-none shadow-md text-black">
+                <CardHeader>
+                  <CardTitle className="text-black dark:text-white">Available Services</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6">
-                {isLoading ? (
-                  <div className="flex justify-center items-center py-8">
-                    <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                <CardContent>
+                  <div className="w-full max-w-md mb-6">
+                    <select
+                      className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 text-black dark:text-white"
+                      value={selectedService?.id?.toString() || ''}
+                      onChange={(e) => {
+                        const service = services.find(s => s.id === Number(e.target.value));
+                        if (service) handleServiceSelect(service);
+                      }}
+                    >
+                      <option value="">Select a service</option>
+                      <optgroup label="GST Services">
+                        {gstServicesData.map(service => (
+                          <option key={service.id} value={service.id}>{service.title}</option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Income Tax Services">
+                        {incomeTaxServicesData.map(service => (
+                          <option key={service.id} value={service.id}>{service.title}</option>
+                        ))}
+                      </optgroup>
+                    </select>
                   </div>
-                ) : fileList.length > 0 ? (
-                  <ul className="space-y-2">
-                    {fileList.map((file, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center justify-between rounded-lg bg-gray-100 p-3 dark:bg-gray-800"
-                      >
-                        <span className="truncate">{file.name}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadFile(file.url, file.name)}
-                          className="ml-2"
+                  {selectedService && (
+                    <div className="space-y-4 text-black dark:text-white">
+                      <h3 className="text-lg font-semibold text-black dark:text-white">{selectedService.title}</h3>
+                      <p className="text-black dark:text-white">{selectedService.description}</p>
+                      {selectedService.features && (
+                        <div className="mt-4">
+                          <h4 className="font-medium mb-2 text-black dark:text-white">Features & Requirements:</h4>
+                          <ul className="list-disc pl-5 space-y-1 text-black dark:text-white">
+                            {selectedService.features.map((feature, index) => (
+                              <li key={index}>{feature}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="documents">
+              <Card className="border-none shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-black dark:text-white">Your Documents</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <Input
+                      type="file"
+                      multiple
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                      className="cursor-pointer text-black"
+                    />
+                    {files.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {files.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                            <span className="text-black truncate">{file.name}</span>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleRemoveFile(index)}
+                              className="ml-2"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <Button
+                      onClick={handleUpload}
+                      disabled={isUploading || files.length === 0}
+                      className={`mt-4 ${isUploading ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
+                    >
+                      {isUploading ? "Uploading..." : "Upload Documents"}
+                    </Button>
+                  </div>
+                  {isLoading ? (
+                    <div className="flex justify-center items-center py-8 text-black dark:text-white">
+                      <p>Loading documents...</p>
+                    </div>
+                  ) : fileList.length > 0 ? (
+                    <ul className="mt-6 space-y-2">
+                      {fileList.map((file, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-black"
                         >
-                          Download
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-600 dark:text-gray-400">No documents have been uploaded yet.</p>
+                          <span className="truncate text-black dark:text-white">{file.name}</span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-black dark:text-white"
+                            onClick={() => handleDownloadFile(file.url, file.name)}
+                          >
+                            Download
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-center py-8 text-black dark:text-white">No documents uploaded yet.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="payment">
+              <Card className="border-none shadow-md">
+                <CardHeader>
+                  <CardTitle>Payment QR Code</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <img
+                      src="/images/payment/default_qrcode.png"
+                      alt="Payment QR Code"
+                      className="w-64 h-64 object-contain mb-4"
+                    />
+                    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                      Scan the QR code to make payment
+                    </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-            )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
-
-      {/* Mobile sidebar toggle */}
-      <div className="md:hidden fixed bottom-4 right-4 z-20">
-        <Button
-          className="p-3 rounded-full shadow-lg"
-          aria-label="Toggle Sidebar"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-      </div>
     </div>
   );
 };
 
-const Dashboard = () => {
+const Dashboard = ({ selectedService }: { selectedService?: Service | null }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <DashboardContent />
+      <DashboardContent selectedService={selectedService} />
     </Suspense>
   );
 };
