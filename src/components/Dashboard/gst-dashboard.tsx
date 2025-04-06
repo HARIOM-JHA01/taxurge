@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTheme } from "next-themes"
 import {
   ArrowUpFromLine,
   CheckCircle2,
@@ -24,12 +25,8 @@ import { ChevronDownIcon, ComponentPlaceholderIcon, MoonIcon, GearIcon, SunIcon,
 import Image from "next/image"
 
 export default function GSTDashboard() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark")
+  const { theme, setTheme } = useTheme()
   const [progress, setProgress] = useState(60)
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,7 +77,7 @@ export default function GSTDashboard() {
             <h1 className="text-lg font-bold">GST Portal</h1>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               {theme === "dark" ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
             </Button>
             <DropdownMenu>
