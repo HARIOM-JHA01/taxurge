@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { verifyAdminPassword, setAdminAuthCookie } from '@/lib/adminAuth';
+import { cookies } from 'next/headers';
+import { verifyAdminPassword } from '@/lib/adminAuth';
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +21,13 @@ export async function POST(request: Request) {
     }
 
     // Set admin authentication cookie
-    setAdminAuthCookie();
+    const cookieStore = cookies();
+    cookieStore.set('admin_auth', 'true', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
 
     return NextResponse.json(
       { message: 'Login successful' },
