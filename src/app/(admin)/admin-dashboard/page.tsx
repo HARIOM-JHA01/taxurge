@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
@@ -10,34 +10,28 @@ const LineChart = dynamic(() => import("@/components/ui/LineChart"), {
 });
 
 export default function AdminDashboard() {
+    const router = useRouter();
     const [users, setUsers] = useState([]);
-    const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showUserList, setShowUserList] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [userDocuments, setUserDocuments] = useState([]);
     const [loadingDocuments, setLoadingDocuments] = useState(false);
+    const [editingUser, setEditingUser] = useState(null);
+    const [editForm, setEditForm] = useState({ fullName: "", email: "" });
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const usersResponse = await fetch("/api/admin/users");
                 const usersData = await usersResponse.json();
-                console.log("Users API Response:", usersData);
-
+                console.log("Fetched users data:", usersData);
                 if (Array.isArray(usersData.users)) {
                     setUsers(usersData.users);
                 } else {
                     console.error("Unexpected users data format:", usersData);
                 }
-
-                const documentsResponse = await fetch(
-                    "/api/admin/users/documents"
-                );
-                const documentsData = await documentsResponse.json();
-                console.log("Documents API Response:", documentsData);
-
-                setDocuments(documentsData.documents || []);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -48,10 +42,16 @@ export default function AdminDashboard() {
         fetchData();
     }, []);
 
-    const handleLogout = () => {
-        document.cookie =
-            "admin_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        redirect("/admin-login");
+    const handleLogout = async () => {
+        try {
+            await fetch("/api/admin/logout", {
+                method: "POST",
+            });
+
+            router.push("/admin-login");
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
     };
 
     const fetchUserDocuments = async (userId) => {
@@ -72,6 +72,54 @@ export default function AdminDashboard() {
     const handleUserClick = async (user) => {
         setSelectedUser(user);
         await fetchUserDocuments(user._id);
+    };
+
+    const handleEditClick = (user, e) => {
+        e.stopPropagation();
+        setEditingUser(user);
+        setEditForm({ fullName: user.fullName, email: user.email });
+    };
+
+    const handleUpdateUser = async () => {
+        try {
+            const response = await fetch(
+                `/api/admin/users/${editingUser._id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(editForm),
+                }
+            );
+
+            if (response.ok) {
+                const updatedUsers = users.map((user) =>
+                    user._id === editingUser._id
+                        ? { ...user, ...editForm }
+                        : user
+                );
+                setUsers(updatedUsers);
+                setEditingUser(null);
+            }
+        } catch (error) {
+            console.error("Error updating user:", error);
+        }
+    };
+
+    const handleDeleteUser = async (userId, e) => {
+        e.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this user?")) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    setUsers(users.filter((user) => user._id !== userId));
+                }
+            } catch (error) {
+                console.error("Error deleting user:", error);
+            }
+        }
     };
 
     const userGrowthData = users.reduce((acc, user) => {
@@ -168,11 +216,29 @@ export default function AdminDashboard() {
                                     <span className="text-sm text-gray-500">
                                         {user.email}
                                     </span>
-                                    <span className="text-sm text-gray-500">
-                                        {new Date(
-                                            user.createdAt
-                                        ).toLocaleDateString()}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-gray-500">
+                                            {new Date(
+                                                user.createdAt
+                                            ).toLocaleDateString()}
+                                        </span>
+                                        <button
+                                            onClick={(e) =>
+                                                handleEditClick(user, e)
+                                            }
+                                            className="p-1 text-blue-500 hover:text-blue-600"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={(e) =>
+                                                handleDeleteUser(user._id, e)
+                                            }
+                                            className="p-1 text-red-500 hover:text-red-600"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -250,6 +316,61 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                         )}
+                    </div>
+                )}
+
+                {editingUser && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                            <h3 className="text-lg font-semibold mb-4">
+                                Edit User
+                            </h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={editForm.fullName}
+                                        onChange={(e) =>
+                                            setEditForm({
+                                                ...editForm,
+                                                fullName: e.target.value,
+                                            })
+                                        }
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={editForm.email}
+                                        onChange={(e) =>
+                                            setEditForm({
+                                                ...editForm,
+                                                email: e.target.value,
+                                            })
+                                        }
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-2">
+                                    <Button
+                                        onClick={() => setEditingUser(null)}
+                                        variant="outline"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleUpdateUser}>
+                                        Save Changes
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
 

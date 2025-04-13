@@ -4,6 +4,14 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
     const router = useRouter();
+
+    const cookieStore = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("admin_auth="));
+    if (cookieStore) {
+        router.push("/admin-dashboard");
+    }
+
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
