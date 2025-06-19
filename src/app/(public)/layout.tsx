@@ -17,18 +17,13 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en" data-theme="dark">
-      <head />
-      <body className={`bg-[#FCFCFC] dark:bg-black ${inter.className}`}>
-        <Providers>
-          <Header />
-          {children}
-          <Analytics />
-          <SpeedInsights />
-          <Footer />
-          <ScrollToTop />
-        </Providers>
-      </body>
-    </html>
+    <Providers>
+      <Header />
+      {children}
+      <Analytics />
+      <SpeedInsights />
+      <Footer />
+      <ScrollToTop />
+    </Providers>
   );
 }

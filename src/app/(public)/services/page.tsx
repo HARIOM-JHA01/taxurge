@@ -32,7 +32,9 @@ const Services = () => {
                   <Image
                     src={service.image}
                     alt={service.title}
-                    className=" h-56 w-full object-cover"
+                    width={384}
+                    height={224}
+                    className="h-56 w-full object-cover"
                   />
                 </figure>
                 <div className="card-body">
@@ -54,7 +56,9 @@ const Services = () => {
                   <Image
                     src={service.image}
                     alt={service.title}
-                    className=" h-56 w-full object-cover"
+                    width={384}
+                    height={224}
+                    className="h-56 w-full object-cover"
                   />
                 </figure>
                 <div className="card-body">

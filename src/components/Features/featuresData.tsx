@@ -17,7 +17,7 @@ const featuresData: Feature[] = [
       "Access expert guidance from our seasoned tax consultants. Whether you're an individual or a business, our professionals will assist you in navigating the complexities of tax laws, ensuring compliance and maximizing deductions.",
   },
   {
-    id: 1,
+    id: 2,
     icon: (
       <svg width="40" height="40" viewBox="0 0 40 40" className="fill-current">
         <path
@@ -32,7 +32,7 @@ const featuresData: Feature[] = [
       "Simplify your tax filing process with our easy document submission feature. Upload your tax documents securely through our platform, eliminating the hassle of physical paperwork and saving you valuable time.",
   },
   {
-    id: 1,
+    id: 3,
     icon: (
       <svg width="40" height="40" viewBox="0 0 40 40" className="fill-current">
         <path
@@ -47,7 +47,7 @@ const featuresData: Feature[] = [
       "Experience seamless and secure online payments with TaxUrge. Our payment gateway ensures the confidentiality and integrity of your financial transactions, providing you with peace of mind.",
   },
   {
-    id: 1,
+    id: 4,
     icon: (
       <svg width="40" height="42" viewBox="0 0 40 42" className="fill-current">
         <path
@@ -62,7 +62,7 @@ const featuresData: Feature[] = [
       "Receive personalized tax planning strategies tailored to your unique financial situation. Our experts will analyze your circumstances and recommend tax-saving opportunities to optimize your returns.",
   },
   {
-    id: 1,
+    id: 5,
     icon: (
       <svg width="40" height="40" viewBox="0 0 40 40" className="fill-current">
         <path
@@ -77,7 +77,7 @@ const featuresData: Feature[] = [
       "Stay on top of your tax obligations with our timely reminders. We'll notify you of important deadlines and requirements, ensuring that you never miss a crucial filing date.",
   },
   {
-    id: 1,
+    id: 6,
     icon: (
       <svg width="40" height="45" viewBox="0 0 40 45" className="fill-current">
         <path

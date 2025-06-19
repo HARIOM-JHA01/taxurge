@@ -29,6 +29,12 @@ const Header = () => {
     setNavbarOpen(!navbarOpen);
   };
 
+  // Close mobile menu when clicking on menu items
+  const closeMobileMenu = () => {
+    setNavbarOpen(false);
+    setOpenIndex(-1); // Also close any open submenus
+  };
+
   // Sticky Navbar
   const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
@@ -44,7 +50,7 @@ const Header = () => {
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
-  const handleSubmenu = (index) => {
+  const handleSubmenu = (index: number) => {
     if (openIndex === index) {
       setOpenIndex(-1);
     } else {
@@ -71,6 +77,7 @@ const Header = () => {
                 className={`header-logo block w-full ${
                   sticky ? "py-5 lg:py-2" : "py-8"
                 } `}
+                onClick={closeMobileMenu}
               >
                 <Image
                   src="/images/logo/logo-2.png"
@@ -126,6 +133,7 @@ const Header = () => {
                         {menuItem.path ? (
                           <Link
                             href={menuItem.path}
+                            onClick={closeMobileMenu}
                             className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
                               usePathName === menuItem.path
                                 ? "text-primary dark:text-white"
@@ -157,10 +165,11 @@ const Header = () => {
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
-                              {menuItem.submenu.map((submenuItem, index) => (
+                              {menuItem.submenu?.map((submenuItem, index) => (
                                 <Link
                                   href={submenuItem.path}
                                   key={index}
+                                  onClick={closeMobileMenu}
                                   className="block rounded py-2.5 text-sm text-dark hover:text-primary dark:text-white/70 dark:hover:text-white lg:px-3"
                                 >
                                   {submenuItem.title}
@@ -191,12 +200,14 @@ const Header = () => {
                   <>
                     <Link
                       href="/login"
+                      onClick={closeMobileMenu}
                       className="hidden py-3 px-7 text-base font-bold text-dark hover:opacity-70 dark:text-white md:block"
                     >
                       Login
                     </Link>
                     <Link
                       href="/signup"
+                      onClick={closeMobileMenu}
                       className="ease-in-up hidden rounded-sm bg-primary py-3 px-8 text-base font-bold text-white transition duration-300 hover:bg-opacity-90 hover:shadow-signUp md:block md:px-9 lg:px-6 xl:px-9"
                     >
                       Sign Up
